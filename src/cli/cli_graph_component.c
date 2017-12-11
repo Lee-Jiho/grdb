@@ -7,6 +7,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+//#include <inttypes.h>
 #include "cli.h"
 #include "graph.h"
 
@@ -122,6 +123,7 @@ cli_graph_component_sssp(char *cmdline, int *pos)
 	/* Load the edge schema */
 	memset(s, 0, BUFSIZE);
 	sprintf(s, "%s/%d/%d/se", grdbdir, gno, cno);
+
 #if _DEBUG
 	printf("cli_graph_component_sssp: ");
 	printf("read edge schema file %s\n", s);
@@ -134,12 +136,41 @@ cli_graph_component_sssp(char *cmdline, int *pos)
 	c.se = schema_read(fd, c.el);
 	close(fd);
 
+
 	/* Setup and run Dijkstra */
 	n = (-1);
 	total_weight = (-1);
+
 	result = component_sssp(&c, v1, v2, &n, &total_weight, &path);
+	/*
 	if (result < 0) {
-		/* Failure... */
+            printf("Error while computing sssp\n");
+            return;
+	}
+        
+        printf("Weight: %d\n", total_weight);
+        printf("Total Vertices In Path: %d\n", n);
+        printf("Path:\n");
+        for (int i = 0; i < n; i++) {
+            printf("%llu " , path[i]);
+            if (i != n-1)
+            {
+                printf("-> ");
+            }
+        }
+
+        printf("\n");
+        */
+     if (result < 0) {
+		// If the algorithm fail
+		printf("Dijkstra failed...\n");
+	} else {
+		printf("Cost: %i\n", total_weight);
+		printf("Djikstra's Path: ");
+		for (int i = 0; i < n; i += 1){
+			printf("%llu ", path[i]);
+		}
+		printf("\n");
 	}
 }
 
